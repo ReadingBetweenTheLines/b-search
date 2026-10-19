@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab Fungsi Pseudocode Bertingkat - Kelas 8</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts: Fredoka & Nunito -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #0d1117;
+      /* Dark doodle math & logic symbols background */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='%2338bdf8' fill-opacity='0.10' font-family='monospace' font-weight='bold'%3E%3Ctext x='15' y='32' font-size='18'%3E%2B%3C/text%3E%3Ctext x='110' y='42' font-size='20'%3E-%3C/text%3E%3Ctext x='65' y='85' font-size='18'%3E*%3C/text%3E%3Ctext x='15' y='130' font-size='18'%3E/%3C/text%3E%3Ctext x='110' y='140' font-size='18'%3E%3D%3C/text%3E%3Ctext x='130' y='90' font-size='16'%3E(%20)%3C/text%3E%3Ccircle cx='85' cy='120' r='3'/%3E%3Ccircle cx='30' cy='75' r='2.5'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .font-bubbly { font-family: 'Fredoka', cursive; }
+    .font-code { font-family: 'Fira Code', monospace; }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col items-center p-3 sm:p-6">
+
+  <!-- Header Global -->
+  <header class="w-full max-w-5xl bg-slate-900/90 backdrop-blur-md border-2 border-cyan-500/30 rounded-3xl p-4 sm:p-5 shadow-xl shadow-cyan-950/40 mb-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <div class="flex items-center gap-3.5">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 text-slate-950 flex items-center justify-center font-code font-black text-xl shadow-md rotate-[-3deg]">
+        f()
+      </div>
+      <div>
+        <h1 class="font-bubbly font-bold text-cyan-300 text-xl sm:text-2xl leading-tight">
+          Lab Fungsi Pseudocode
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-400 font-semibold">Informatika Kelas 8 • Pemrograman Multi-Parameter & Operasi Komputasi</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <div id="save-indicator" class="hidden text-[11px] bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 font-bold px-3 py-1.5 rounded-2xl flex items-center gap-1.5">
+        <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <span>Tersimpan di Browser</span>
+      </div>
+      <div id="student-badge" class="hidden text-xs bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 font-bold px-4 py-2 rounded-2xl flex items-center gap-2">
+        <i data-lucide="user-check" class="w-4 h-4 text-cyan-400"></i>
+        <span id="student-badge-text">Siswa</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SCREEN 1: Registrasi Siswa -->
+  <main id="screen-auth" class="w-full max-w-md bg-slate-900/95 border-2 border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+    <div class="text-center mb-6">
+      <div class="w-16 h-16 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-3xl flex items-center justify-center mx-auto mb-3 text-3xl">
+        🎯
+      </div>
+      <h2 class="font-bubbly text-2xl font-bold text-white">Misi Pemrograman Kelas 8</h2>
+      <p class="text-xs sm:text-sm text-slate-400 mt-1 font-medium">Mulai dari fungsi 2 nilai, lalu tingkatkan kemampuan ke 3 dan 4 nilai input!</p>
+    </div>
+
+    <form onsubmit="handleStart(event)" class="space-y-4">
+      <div>
+        <label for="student-name" class="block text-xs font-black uppercase tracking-wider text-cyan-400 mb-1.5">Nama Lengkap Siswa</label>
+        <input type="text" id="student-name" required placeholder="Contoh: Farhan Alamsyah" class="w-full px-4 py-3 rounded-2xl bg-slate-800 border-2 border-slate-700 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/20 text-sm font-bold text-white placeholder-slate-500 outline-none transition">
+      </div>
+
+      <div>
+        <label for="student-class" class="block text-xs font-black uppercase tracking-wider text-cyan-400 mb-1.5">Kelas</label>
+        <select id="student-class" required class="w-full px-4 py-3 rounded-2xl bg-slate-800 border-2 border-slate-700 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/20 text-sm font-bold text-white outline-none transition">
+          <option value="" disabled selected class="text-slate-400">Pilih kelas...</option>
+          <option value="VIII-1" class="bg-slate-800 text-white">Kelas VIII-1</option>
+          <option value="VIII-2" class="bg-slate-800 text-white">Kelas VIII-2</option>
+          <option value="VIII-3" class="bg-slate-800 text-white">Kelas VIII-3</option>
+          <option value="VIII-4" class="bg-slate-800 text-white">Kelas VIII-4</option>
+          <option value="VIII-5" class="bg-slate-800 text-white">Kelas VIII-5</option>
+        </select>
+      </div>
+
+      <button type="submit" class="w-full mt-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bubbly font-black py-3.5 px-4 rounded-2xl shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 text-base">
+        <span>Mulai dari Kasus 1</span>
+        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+      </button>
+    </form>
+  </main>
+
+  <!-- SCREEN 2: Workspace Editor & Skenario -->
+  <main id="screen-workspace" class="hidden w-full max-w-5xl space-y-5">
+
+    <!-- Progress Navigasi 5 Kasus -->
+    <div class="bg-slate-900/90 border-2 border-slate-800 rounded-3xl p-4 sm:p-5 shadow-lg">
+      <div class="flex items-center justify-between mb-3">
+        <span class="font-bubbly font-bold text-sm text-slate-300">Tingkat Kasus:</span>
+        <span id="mission-badge" class="font-bubbly font-bold text-xs bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full border border-cyan-500/30">Kasus 1 / 5</span>
+      </div>
+      <div class="grid grid-cols-5 gap-2" id="mission-progress-bar"></div>
+    </div>
+
+    <!-- PANDUAN SIMBOL OPERATOR (HINT BOX OPERASI) -->
+    <div class="bg-gradient-to-r from-amber-950/40 to-slate-900 border-2 border-amber-500/30 rounded-3xl p-4 shadow-lg space-y-2.5">
+      <div class="flex items-center justify-between">
+        <span class="font-bubbly font-bold text-amber-400 text-sm flex items-center gap-2">
+          <span>💡 Petunjuk Simbol Operasi yang Digunakan:</span>
+        </span>
+        <span class="text-[10px] text-amber-300/80 font-mono">Bisa pakai * atau x untuk kali</span>
+      </div>
+      
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs font-mono">
+        <div class="bg-black/60 border border-slate-800 rounded-xl p-2 text-center">
+          <span class="text-slate-400 block text-[10px] uppercase font-sans font-bold">Tambah</span>
+          <span class="text-cyan-400 font-black text-sm">+</span>
+        </div>
+        <div class="bg-black/60 border border-slate-800 rounded-xl p-2 text-center">
+          <span class="text-slate-400 block text-[10px] uppercase font-sans font-bold">Kurang</span>
+          <span class="text-cyan-400 font-black text-sm">-</span>
+        </div>
+        <div class="bg-black/60 border border-slate-800 rounded-xl p-2 text-center">
+          <span class="text-slate-400 block text-[10px] uppercase font-sans font-bold">Kali</span>
+          <span class="text-amber-400 font-black text-sm">* <span class="text-slate-500 text-xs font-sans">atau</span> x</span>
+        </div>
+        <div class="bg-black/60 border border-slate-800 rounded-xl p-2 text-center">
+          <span class="text-slate-400 block text-[10px] uppercase font-sans font-bold">Bagi</span>
+          <span class="text-cyan-400 font-black text-sm">/</span>
+        </div>
+        <div class="bg-black/60 border border-slate-800 rounded-xl p-2 text-center col-span-2 sm:col-span-1">
+          <span class="text-slate-400 block text-[10px] uppercase font-sans font-bold">Gabung Teks</span>
+          <span class="text-emerald-400 font-bold text-xs">kataA + kataB</span>
+          <span class="text-[9px] text-slate-500 block font-sans">(otomatis berspasi)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel Referensi: Contoh Format Fungsi -->
+    <div class="bg-slate-900/90 border-2 border-slate-800 rounded-3xl p-4 sm:p-5 shadow-lg space-y-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2 font-bubbly font-bold text-cyan-400 text-sm">
+          <span>📚 Pola Penulisan Fungsi (Bisa Dipakai Berulang Kali):</span>
+        </div>
+        <span class="text-[10px] text-slate-400 font-mono">Pisahkan parameter dengan tanda koma ( , )</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <!-- Contoh Hitungan -->
+        <div class="bg-black/60 border border-slate-800 rounded-2xl p-3 font-code text-xs space-y-1">
+          <div class="text-[11px] font-bold text-amber-400 font-sans flex items-center gap-1">
+            <span>Contoh: Fungsi Perhitungan Angka</span>
+          </div>
+          <div class="text-slate-300 leading-relaxed">
+            <span class="text-cyan-400">hitungBalok</span> (p, l, t):<br>
+            &nbsp;&nbsp;&nbsp;hasil = p * l * t<br>
+            &nbsp;&nbsp;&nbsp;<span class="text-pink-400">kembalikan</span> hasil<br><br>
+            <span class="text-slate-500">// Panggil fungsi di bawahnya:</span><br>
+            hitungBalok(10, 5, 2) <span class="text-emerald-400">&rarr; 100</span>
+          </div>
+        </div>
+
+        <!-- Contoh Teks -->
+        <div class="bg-black/60 border border-slate-800 rounded-2xl p-3 font-code text-xs space-y-1">
+          <div class="text-[11px] font-bold text-cyan-400 font-sans flex items-center gap-1">
+            <span>Contoh: Fungsi Penggabungan Teks</span>
+          </div>
+          <div class="text-slate-300 leading-relaxed">
+            <span class="text-cyan-400">salamSiswa</span> (sapaan, nama):<br>
+            &nbsp;&nbsp;&nbsp;hasil = sapaan + nama<br>
+            &nbsp;&nbsp;&nbsp;<span class="text-pink-400">kembalikan</span> hasil<br><br>
+            <span class="text-slate-500">// Otomatis tersambung dengan spasi:</span><br>
+            salamSiswa("Halo", "Rian") <span class="text-emerald-400">&rarr; Halo Rian</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workspace Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      
+      <!-- Kolom Kiri: Kasus Cerita & Terminal Output (5 Kolom) -->
+      <section class="lg:col-span-5 space-y-4">
+        
+        <!-- Kartu Skenario Cerita -->
+        <div class="bg-slate-900/90 border-2 border-slate-800 rounded-3xl p-5 shadow-lg space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span id="scenario-category" class="text-[10px] font-black uppercase text-amber-400 tracking-wider">Level 1 • 2 Parameter</span>
+            <span id="scenario-id-tag" class="text-[10px] font-bold text-slate-500 font-mono">ID: K-01</span>
+          </div>
+
+          <h2 id="scenario-title" class="font-bubbly font-bold text-xl text-white">Kasir Bakso Kantin</h2>
+
+          <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-3.5 space-y-2.5">
+            <p id="scenario-story" class="text-xs text-slate-200 leading-relaxed font-semibold"></p>
+            
+            <!-- Petunjuk Operator Khusus untuk Soal Ini -->
+            <div id="operator-hint-box" class="bg-cyan-950/40 border border-cyan-500/30 p-2 rounded-xl text-[11px] text-cyan-300 font-bold flex items-center gap-2">
+              <i data-lucide="info" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+              <span id="operator-hint-text">Gunakan operator kali (* atau x).</span>
+            </div>
+
+            <div class="border-t border-slate-700 pt-2 text-[11px] text-cyan-300 font-bold">
+              <span>Tugasmu: </span><span id="scenario-goal" class="text-slate-300 font-medium">Ketik fungsimu sendiri dari awal di editor sebelah kanan.</span>
+            </div>
+          </div>
+
+          <div class="bg-black/50 border border-slate-800 rounded-2xl p-3">
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Target Nilai Terminal:</span>
+            <div id="target-output-hint" class="font-code text-xs text-emerald-400 font-bold"></div>
+          </div>
+        </div>
+
+        <!-- Terminal Output -->
+        <div class="bg-slate-900/90 border-2 border-slate-800 rounded-3xl p-4 shadow-lg space-y-2">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bubbly font-bold text-xs uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i>
+              <span>Terminal Hasil Uji</span>
+            </h3>
+            <span id="test-status-pill" class="text-[10px] bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-full font-bold">Belum Diuji</span>
+          </div>
+
+          <div id="terminal-output" class="bg-black/90 rounded-2xl p-3.5 font-code text-xs text-slate-300 min-h-[120px] max-h-44 overflow-y-auto space-y-1 border border-slate-800">
+            <div class="text-slate-600 italic">Ketik kodemu dari awal di samping, lalu tekan "Jalankan Pseudocode".</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Kolom Kanan: Code Editor Benar-benar Blank (7 Kolom) -->
+      <section class="lg:col-span-7 space-y-4">
+        
+        <div class="bg-slate-900/90 border-2 border-slate-800 rounded-3xl p-5 shadow-lg space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+              <span class="text-xs text-slate-400 font-mono ml-2">editor_jawaban.txt</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="typing-status" class="text-[10px] text-slate-500 font-mono">Tersimpan otomatis</span>
+              <button onclick="clearEditor()" class="text-xs text-slate-400 hover:text-cyan-400 font-bold transition flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                <span>Bersihkan</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Textarea Editor Blank Tanpa Placeholder / Hint -->
+          <div>
+            <textarea id="code-editor" spellcheck="false" rows="12" class="w-full p-4 rounded-2xl bg-black/80 border-2 border-slate-800 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/20 text-xs sm:text-sm font-code text-cyan-300 outline-none leading-relaxed resize-none"></textarea>
+          </div>
+
+          <!-- Tombol Run & Lanjut -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-1">
+            <button onclick="runPseudocode()" class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bubbly font-black py-3 px-4 rounded-2xl shadow-lg shadow-cyan-500/20 transition flex items-center justify-center gap-2 text-sm">
+              <i data-lucide="play" class="w-4 h-4 fill-slate-950"></i>
+              <span>Jalankan Pseudocode</span>
+            </button>
+
+            <button id="btn-next-mission" disabled onclick="handleNextMission()" class="hidden bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bubbly font-black py-3 px-5 rounded-2xl shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2 text-sm">
+              <span id="next-btn-text">Kasus Berikutnya</span>
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Indikator Simpan ke Google Sheet -->
+          <div id="sheet-sync-status" class="text-center text-[11px] font-semibold text-slate-500 hidden pt-1"></div>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- SCREEN 3: Rapor Akhir -->
+  <main id="screen-summary" class="hidden w-full max-w-2xl bg-slate-900/95 border-2 border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+    <div class="text-center mb-6">
+      <div class="w-16 h-16 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-3xl flex items-center justify-center mx-auto mb-3 text-3xl">
+        🏆
+      </div>
+      <h2 class="font-bubbly text-2xl sm:text-3xl font-black text-white">Semua Skenario Terpecahkan!</h2>
+      <p class="text-xs sm:text-sm text-slate-400 mt-1 font-semibold">Hebat! Kamu berhasil menaklukkan tantangan fungsi mulai dari 2, 3, hingga 4 parameter.</p>
+    </div>
+
+    <!-- Ringkasan Siswa -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-800/80 border border-slate-700 rounded-2xl p-4 text-center mb-5">
+      <div>
+        <span class="text-[10px] text-slate-400 uppercase font-black block">Nama</span>
+        <span id="sum-name" class="font-bold text-xs sm:text-sm text-white truncate block">-</span>
+      </div>
+      <div>
+        <span class="text-[10px] text-slate-400 uppercase font-black block">Kelas</span>
+        <span id="sum-class" class="font-bold text-xs sm:text-sm text-white block">-</span>
+      </div>
+      <div>
+        <span class="text-[10px] text-slate-400 uppercase font-black block">Selesai</span>
+        <span class="font-bubbly text-xl font-black text-cyan-400 block">5 / 5 Kasus</span>
+      </div>
+      <div>
+        <span class="text-[10px] text-slate-400 uppercase font-black block">Predikat</span>
+        <span class="text-xs font-bold text-emerald-400 block">Ahli Fungsi</span>
+      </div>
+    </div>
+
+    <!-- Tabel Hasil -->
+    <div class="border border-slate-800 rounded-2xl overflow-hidden mb-5">
+      <table class="w-full text-xs text-left">
+        <thead class="bg-slate-800/90 border-b border-slate-700 text-slate-300 font-bold uppercase text-[10px]">
+          <tr>
+            <th class="py-2.5 px-3">Kasus</th>
+            <th class="py-2.5 px-3">Fungsi Solusi</th>
+            <th class="py-2.5 px-3">Status</th>
+            <th class="py-2.5 px-3 text-right">Hasil Terminal</th>
+          </tr>
+        </thead>
+        <tbody id="summary-table-body" class="divide-y divide-slate-800 font-semibold text-slate-300"></tbody>
+      </table>
+    </div>
+
+    <div class="space-y-3">
+      <div id="final-sheet-status" class="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-center text-xs font-bold text-emerald-300">
+        ✓ Rekap lengkap 5 kasus telah tersimpan di Google Sheet Guru.
+      </div>
+
+      <button onclick="copySubmissionReport()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bubbly font-bold py-3 px-4 rounded-2xl border border-slate-700 transition flex items-center justify-center gap-2 text-sm">
+        <i data-lucide="copy" class="w-4 h-4"></i>
+        <span>Salin Ringkasan Solusi (WhatsApp Guru)</span>
+      </button>
+
+      <button onclick="startFreshAll()" class="w-full bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-bold py-2.5 px-4 rounded-2xl border border-slate-800 transition text-xs flex items-center justify-center gap-2">
+        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+        <span>Mulai Ulang dari Awal (Reset Data Browser)</span>
+      </button>
+    </div>
+  </main>
+
+  <script>
+    // ====================================================
+    // ENDPOINT WEB APP GOOGLE APPS SCRIPT
+    // ====================================================
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxIfXsXFU_yxM7WLZrmCLF4rwkXnzGAQWbpae9z4nt_af7CbeNCzoqGY-u20DKh_LOkkw/exec";
+
+    // 5 SKENARIO DENGAN PROGRESI PARAMETER (2 -> 3 -> 4)
+    const SCENARIOS = [
+      {
+        id: 1,
+        paramsCount: 2,
+        category: "Tingkat 1 • 2 Parameter",
+        title: "Total Jajan Bakso Kantin",
+        story: "Di jam istirahat, kamu memesan beberapa porsi bakso untuk teman sekelompokmu. Harga 1 porsi bakso adalah 12.000 dan kamu memesan sebanyak 4 porsi. Kantin membutuhkan fungsi penghitung perkalian otomatis.",
+        operatorHint: "Petunjuk Operasi: Gunakan perkalian (* atau huruf x).",
+        goal: "Buat fungsi hitungBakso (hargaSatuPorsi, banyakPorsi) agar mengalikan harga dengan jumlahnya, lalu panggil dengan angka 12000 dan 4.",
+        targetOutput: "48000",
+        expectedVal: 48000
+      },
+      {
+        id: 2,
+        paramsCount: 2,
+        category: "Tingkat 2 • 2 Parameter (Penggabungan Teks)",
+        title: "Sapaan Otomatis Siswa",
+        story: "Robot piket gerbang sekolah menyapa siswa dengan menyatukan kata sapaan dan nama siswa. Contoh: sapaan 'Selamat' digabungkan dengan 'Pagi' menghasilkan kalimat: 'Selamat Pagi'.",
+        operatorHint: "Petunjuk Operasi: Cukup gunakan tanda tambah (+) untuk menyambung teks (contoh: kataA + kataB). Sistem otomatis memberi spasi di antaranya.",
+        goal: "Buat fungsi sapaanSiswa (kataSapaan, namaWaktu) agar menggabungkan kata dengan operator +, lalu panggil dengan \"Selamat\" dan \"Pagi\".",
+        targetOutput: "Selamat Pagi",
+        expectedVal: "Selamat Pagi"
+      },
+      {
+        id: 3,
+        paramsCount: 3,
+        category: "Tingkat 3 • 3 Parameter (Hitung + Ongkir)",
+        title: "Belanja Buku Online & Ongkir",
+        story: "Kamu membeli buku catatan Informatika di toko online. Rumus total bayarnya adalah: (hargaBuku * jumlahBuku) + ongkir. Diketahui harga 1 buku 15.000, kamu membeli 3 buku, dan ongkos kirim flat adalah 10.000.",
+        operatorHint: "Petunjuk Operasi: Gunakan perkalian (* atau x) lalu jumlahkan dengan tambah (+).",
+        goal: "Buat fungsi totalBelanja (hargaBuku, jumlahBuku, ongkir) lalu panggil dengan nilai 15000, 3, dan 10000.",
+        targetOutput: "55000",
+        expectedVal: 55000
+      },
+      {
+        id: 4,
+        paramsCount: 3,
+        category: "Tingkat 4 • 3 Parameter (Rata-rata)",
+        title: "Rata-rata 3 Nilai Tugas Harian",
+        story: "Guru Informatika memberikan 3 tugas harian selama satu bulan. Nilai tugas pertamamu 80, tugas kedua 85, dan tugas ketiga 90. Rumus rata-ratanya: (tugas1 + tugas2 + tugas3) / 3.",
+        operatorHint: "Petunjuk Operasi: Jumlahkan ketiga nilai dengan tanda tambah (+) di dalam kurung, lalu bagi dengan garis miring ( / ).",
+        goal: "Buat fungsi rataNilai (tugas1, tugas2, tugas3) lalu panggil dengan nilai 80, 85, dan 90.",
+        targetOutput: "85",
+        expectedVal: 85
+      },
+      {
+        id: 5,
+        paramsCount: 4,
+        category: "Tingkat 5 • 4 Parameter (Turnamen Game)",
+        title: "Skor Turnamen Game Antarkelas",
+        story: "Dalam turnamen e-sport classmeeting, tim kelasmu bertanding dengan aturan poin: menang dapat 3 poin, seri dapat 1 poin, kalah dapat 0 poin, serta bonus MVP tambahan. Rumusnya: (menang * 3) + (seri * 1) + (kalah * 0) + bonusMVP. Data catatan timmu adalah: 5 kali menang, 2 kali seri, 1 kali kalah, dan mendapat bonus MVP 6 poin.",
+        operatorHint: "Petunjuk Operasi: Gunakan perkalian (* atau x) untuk masing-masing poin hasil laga, lalu jumlahkan semuanya dengan (+).",
+        goal: "Buat fungsi totalSkor (menang, seri, kalah, bonusMVP) lalu panggil dengan angka 5, 2, 1, dan 6.",
+        targetOutput: "23",
+        expectedVal: 23
+      }
+    ];
+
+    const STORAGE_KEY = "lab_pseudocode_adaptive_drafts";
+
+    let appState = {
+      name: "",
+      studentClass: "",
+      currentMissionIdx: 0,
+      codeDrafts: ["", "", "", "", ""],
+      results: [],
+      isCompleted: false
+    };
+
+    // ==========================================
+    // OFFLINE QUEUE SYSTEM
+    // ==========================================
+
+    function queueOfflineSubmission(payload) {
+      let queue = JSON.parse(localStorage.getItem("offline_sheet_queue") || "[]");
+      queue.push(payload);
+      localStorage.setItem("offline_sheet_queue", JSON.stringify(queue));
+    }
+
+    async function flushOfflineQueue() {
+      let queue = JSON.parse(localStorage.getItem("offline_sheet_queue") || "[]");
+      if (queue.length === 0) return;
+
+      let remaining = [];
+      for (let payload of queue) {
+        try {
+          await fetch(SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+        } catch (e) {
+          remaining.push(payload);
+        }
+      }
+      localStorage.setItem("offline_sheet_queue", JSON.stringify(remaining));
+    }
+
+    window.addEventListener("online", flushOfflineQueue);
+
+    // ==========================================
+    // AUTO-SAVE REAL-TIME
+    // ==========================================
+
+    function saveStateToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        const statusEl = document.getElementById("typing-status");
+        if (statusEl) {
+          statusEl.innerText = "✓ Tersimpan di browser";
+          statusEl.className = "text-[10px] text-emerald-400 font-mono";
+        }
+      } catch (e) {
+        console.error("Gagal simpan ke localStorage:", e);
+      }
+    }
+
+    function loadStateFromStorage() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return false;
+      try {
+        const parsed = JSON.parse(saved);
+        appState = Object.assign(appState, parsed);
+        return true;
+      } catch (e) {
+        console.error("Gagal memuat localStorage:", e);
+        return false;
+      }
+    }
+
+    function handleStart(e) {
+      e.preventDefault();
+      const name = document.getElementById("student-name").value.trim();
+      const sClass = document.getElementById("student-class").value;
+
+      if (!name || !sClass) return;
+
+      appState.name = name;
+      appState.studentClass = sClass;
+      saveStateToStorage();
+
+      enterWorkspaceUI();
+    }
+
+    function enterWorkspaceUI() {
+      document.getElementById("student-badge-text").innerText = `${appState.name} (${appState.studentClass})`;
+      document.getElementById("student-badge").classList.remove("hidden");
+      document.getElementById("save-indicator").classList.remove("hidden");
+
+      document.getElementById("screen-auth").classList.add("hidden");
+
+      if (appState.isCompleted) {
+        showSummary();
+      } else {
+        document.getElementById("screen-workspace").classList.remove("hidden");
+        renderProgressNav();
+        loadScenario(appState.currentMissionIdx);
+      }
+      lucide.createIcons();
+      flushOfflineQueue();
+    }
+
+    function renderProgressNav() {
+      const container = document.getElementById("mission-progress-bar");
+      container.innerHTML = "";
+      SCENARIOS.forEach((_, idx) => {
+        const bar = document.createElement("div");
+        bar.id = `mission-bar-${idx}`;
+        bar.className = "h-2.5 rounded-full bg-slate-800 transition-all duration-300";
+        container.appendChild(bar);
+      });
+    }
+
+    function loadScenario(idx) {
+      appState.currentMissionIdx = idx;
+      saveStateToStorage();
+      const s = SCENARIOS[idx];
+
+      SCENARIOS.forEach((_, i) => {
+        const bar = document.getElementById(`mission-bar-${i}`);
+        if (!bar) return;
+        if (i < idx) {
+          bar.className = "h-2.5 rounded-full bg-emerald-500";
+        } else if (i === idx) {
+          bar.className = "h-2.5 rounded-full bg-cyan-400 animate-pulse";
+        } else {
+          bar.className = "h-2.5 rounded-full bg-slate-800";
+        }
+      });
+
+      document.getElementById("mission-badge").innerText = `Kasus ${idx + 1} / ${SCENARIOS.length}`;
+      document.getElementById("scenario-category").innerText = `${s.category}`;
+      document.getElementById("scenario-id-tag").innerText = `K-0${idx + 1}`;
+      document.getElementById("scenario-title").innerText = s.title;
+      document.getElementById("scenario-story").innerText = s.story;
+      document.getElementById("operator-hint-text").innerText = s.operatorHint;
+      document.getElementById("scenario-goal").innerText = s.goal;
+      document.getElementById("target-output-hint").innerText = s.targetOutput;
+
+      const editor = document.getElementById("code-editor");
+      editor.value = appState.codeDrafts[idx] || "";
+      editor.focus();
+
+      const terminal = document.getElementById("terminal-output");
+      terminal.innerHTML = `<div class="text-slate-600 italic">Ketik kodemu dari awal di samping, lalu tekan "Jalankan Pseudocode".</div>`;
+
+      const statusPill = document.getElementById("test-status-pill");
+      statusPill.className = "text-[10px] bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-full font-bold";
+      statusPill.innerText = "Belum Diuji";
+
+      document.getElementById("btn-next-mission").classList.add("hidden");
+      document.getElementById("sheet-sync-status").classList.add("hidden");
+      lucide.createIcons();
+    }
+
+    document.getElementById("code-editor").addEventListener("input", (e) => {
+      appState.codeDrafts[appState.currentMissionIdx] = e.target.value;
+      saveStateToStorage();
+    });
+
+    function clearEditor() {
+      const editor = document.getElementById("code-editor");
+      editor.value = "";
+      appState.codeDrafts[appState.currentMissionIdx] = "";
+      saveStateToStorage();
+      editor.focus();
+    }
+
+    // ====================================================
+    // INTERPRETER PSEUDOCODE FLEKSIBEL (SUPPORT x, *, & AUTO-SPASI STRING)
+    // ====================================================
+
+    function runPseudocode() {
+      const scenario = SCENARIOS[appState.currentMissionIdx];
+      const editor = document.getElementById("code-editor");
+      const rawCode = editor.value.trim();
+      const terminal = document.getElementById("terminal-output");
+      terminal.innerHTML = "";
+
+      const printLog = (text, cls = "text-slate-200") => {
+        const el = document.createElement("div");
+        el.className = cls;
+        el.innerText = text;
+        terminal.appendChild(el);
+      };
+
+      if (!rawCode) {
+        printLog(`✗ Error: Editor masih kosong! Ketik fungsi dan baris pemanggilannya terlebih dahulu.`, "text-rose-400 font-bold");
+        updatePill(false);
+        return;
+      }
+
+      printLog(`> Menjalankan pseudocode skenario...\n`, "text-cyan-400 font-bold");
+
+      const funcHeaderMatch = rawCode.match(/^([a-zA-Z0-9_]+)\s*\(([^)]*)\)\s*:/m);
+      if (!funcHeaderMatch) {
+        printLog(`✗ Error Sintaks: Deklarasi fungsi harus diakhiri tanda titik dua ':'\nContoh: namaFungsi (a, b):`, "text-rose-400");
+        updatePill(false);
+        return;
+      }
+
+      const definedFuncName = funcHeaderMatch[1];
+      const paramsList = funcHeaderMatch[2].split(",").map(p => p.trim()).filter(p => p.length > 0);
+
+      if (paramsList.length < scenario.paramsCount) {
+        printLog(`✗ Error Parameter: Skenario ini membutuhkan minimal ${scenario.paramsCount} parameter input, tetapi baru kamu tulis ${paramsList.length} parameter.`, "text-rose-400 font-bold");
+        updatePill(false);
+        return;
+      }
+
+      if (!rawCode.toLowerCase().includes("kembalikan")) {
+        printLog(`✗ Error: Fungsi belum mengembalikan nilai. Gunakan kata kunci 'kembalikan ...'`, "text-rose-400");
+        updatePill(false);
+        return;
+      }
+
+      const callRegex = new RegExp(`^(${definedFuncName})\\s*\\(([^)]*)\\)\\s*$`, "m");
+      const callMatch = rawCode.match(callRegex);
+
+      if (!callMatch) {
+        printLog(`✗ Error: Panggil fungsimu di baris paling bawah.\nContoh: ${definedFuncName}(...)`, "text-rose-400");
+        updatePill(false);
+        return;
+      }
+
+      try {
+        const result = executeScriptSandbox(rawCode, definedFuncName, paramsList, callMatch[2], scenario.id === 2);
+        
+        printLog(`[Terminal Output]:`, "text-amber-400 font-bold");
+        printLog(String(result), "text-2xl font-bold text-white py-1");
+
+        const isTargetMatch = (typeof result === "number" && typeof scenario.expectedVal === "number")
+          ? Math.abs(result - scenario.expectedVal) < 0.001
+          : String(result).trim().toLowerCase() === String(scenario.expectedVal).trim().toLowerCase();
+
+        if (isTargetMatch) {
+          printLog(`\n✓ Sukses: Kasus ${scenario.paramsCount} parameter terpecahkan dengan tepat! Nilai fungsi sesuai target.`, "text-emerald-400 font-semibold");
+          updatePill(true);
+          confetti({ particleCount: 65, spread: 60, origin: { y: 0.7 } });
+
+          appState.results[appState.currentMissionIdx] = {
+            id: scenario.id,
+            title: scenario.title,
+            funcName: definedFuncName,
+            code: rawCode,
+            output: String(result)
+          };
+          saveStateToStorage();
+
+          const nextBtn = document.getElementById("btn-next-mission");
+          nextBtn.classList.remove("hidden");
+          nextBtn.disabled = false;
+
+          if (appState.currentMissionIdx + 1 < SCENARIOS.length) {
+            document.getElementById("next-btn-text").innerText = `Lanjut Kasus ${appState.currentMissionIdx + 2}`;
+          } else {
+            document.getElementById("next-btn-text").innerText = `Lihat Rapor Akhir`;
+          }
+
+          sendScenarioToSheets(scenario.id, scenario.title, definedFuncName, rawCode, result);
+
+        } else {
+          printLog(`\n⚠ Catatan: Program berhasil berjalan, namun hasilnya (${result}) belum sama dengan target skenario (${scenario.targetOutput}). Periksa kembali rumus atau angka pemanggilanmu.`, "text-amber-300 font-semibold");
+          updatePill(false);
+        }
+
+      } catch (err) {
+        printLog(`✗ Kesalahan Eksekusi: ${err.message}`, "text-rose-400");
+        updatePill(false);
+      }
+    }
+
+    function updatePill(isSuccess) {
+      const pill = document.getElementById("test-status-pill");
+      if (isSuccess) {
+        pill.className = "text-[10px] bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-bold border border-emerald-500/30";
+        pill.innerText = "✓ BERHASIL";
+      } else {
+        pill.className = "text-[10px] bg-rose-500/20 text-rose-400 px-2.5 py-0.5 rounded-full font-bold border border-rose-500/30";
+        pill.innerText = "✗ BELUM SESUAI";
+      }
+    }
+
+    /**
+     * Parsing baris instruksi:
+     * - Mendukung huruf 'x' atau 'X' sebagai perkalian '*'
+     * - Untuk skenario string (isStringScenario = true), operator '+' otomatis menyisipkan spasi pemisah (' ')
+     */
+    function executeScriptSandbox(code, funcName, params, callArgsStr, isStringScenario = false) {
+      const lines = code.split("\n");
+      let inFunction = false;
+      let funcBody = [];
+
+      for (let rawLine of lines) {
+        let line = rawLine.trim();
+        if (!line || line.startsWith("//")) continue;
+
+        if (line.match(new RegExp(`^${funcName}\\s*\\([^)]*\\)\\s*:`))) {
+          inFunction = true;
+          continue;
+        }
+
+        if (line.match(new RegExp(`^${funcName}\\s*\\(`))) {
+          inFunction = false;
+          continue;
+        }
+
+        if (inFunction) {
+          // Dukung operator 'x' sebagai perkalian jika bukan teks
+          if (!line.includes('"') && !line.includes("'") && !isStringScenario) {
+            line = line.replace(/(\b|\d|\))\s*[xX]\s*(\b|\d|\()/g, "$1 * $2");
+          }
+
+          // Khusus skenario penggabungan string: ubah a + b menjadi a + " " + b otomatis jika belum ada spasi manual
+          if (isStringScenario && line.includes("+") && !line.includes('" "') && !line.includes("' '")) {
+            line = line.replace(/\s*\+\s*/g, ' + " " + ');
+          }
+
+          if (line.toLowerCase().startsWith("kembalikan ")) {
+            const expr = line.substring(11).trim();
+            funcBody.push(`return ${expr};`);
+          } else if (line.includes("=") && !line.startsWith("let ") && !line.startsWith("const ")) {
+            funcBody.push(`let ${line};`);
+          } else {
+            funcBody.push(`${line};`);
+          }
+        }
+      }
+
+      const fn = new Function(...params, funcBody.join("\n"));
+      const evaluatedArgs = new Function(`return [${callArgsStr}];`)();
+      return fn(...evaluatedArgs);
+    }
+
+    // ====================================================
+    // INTEGRASI GOOGLE APPS SCRIPT DENGAN OFFLINE QUEUE
+    // ====================================================
+
+    async function sendScenarioToSheets(id, title, funcName, code, output) {
+      const syncStatus = document.getElementById("sheet-sync-status");
+      syncStatus.className = "text-center text-[11px] font-semibold text-cyan-400 block pt-1";
+      syncStatus.innerText = "Mengirim kode jawaban ke Google Sheets Guru...";
+
+      const payload = {
+        type: "scenario_complete",
+        studentName: appState.name,
+        studentClass: appState.studentClass,
+        scenarioId: id,
+        scenarioTitle: title,
+        funcName: funcName,
+        studentCode: code,
+        terminalOutput: output
+      };
+
+      if (!navigator.onLine) {
+        queueOfflineSubmission(payload);
+        syncStatus.className = "text-center text-[11px] font-semibold text-amber-400 block pt-1";
+        syncStatus.innerText = "Koneksi terputus. Jawaban tersimpan di browser & akan otomatis terkirim saat online.";
+        return;
+      }
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        syncStatus.className = "text-center text-[11px] font-semibold text-emerald-400 block pt-1";
+        syncStatus.innerText = "✓ Jawaban Kasus " + id + " berhasil masuk ke Google Sheets Guru!";
+        flushOfflineQueue();
+      } catch (e) {
+        console.error("Gagal sync sheet:", e);
+        queueOfflineSubmission(payload);
+        syncStatus.className = "text-center text-[11px] font-semibold text-amber-400 block pt-1";
+        syncStatus.innerText = "Disimpan di browser. Akan dikirim otomatis begitu koneksi stabil.";
+      }
+    }
+
+    function handleNextMission() {
+      if (appState.currentMissionIdx + 1 < SCENARIOS.length) {
+        loadScenario(appState.currentMissionIdx + 1);
+      } else {
+        appState.isCompleted = true;
+        saveStateToStorage();
+        showSummary();
+      }
+    }
+
+    // ====================================================
+    // SCREEN 3: RAPOR AKHIR & REKAP KESELURUHAN
+    // ====================================================
+
+    function showSummary() {
+      document.getElementById("screen-workspace").classList.add("hidden");
+      document.getElementById("screen-summary").classList.remove("hidden");
+
+      document.getElementById("sum-name").innerText = appState.name;
+      document.getElementById("sum-class").innerText = appState.studentClass;
+
+      const tbody = document.getElementById("summary-table-body");
+      tbody.innerHTML = appState.results.map((r, i) => `
+        <tr class="hover:bg-slate-800/50 transition">
+          <td class="py-2.5 px-3 font-bold text-white">Kasus ${i + 1}: ${r.title}</td>
+          <td class="py-2.5 px-3 font-code text-cyan-300">${r.funcName}()</td>
+          <td class="py-2.5 px-3 font-bold text-emerald-400">✓ Berhasil</td>
+          <td class="py-2.5 px-3 text-right font-mono text-amber-300 font-bold">${r.output}</td>
+        </tr>
+      `).join("");
+
+      sendFinalSummaryToSheets();
+
+      confetti({ particleCount: 130, spread: 80, origin: { y: 0.6 } });
+      lucide.createIcons();
+    }
+
+    async function sendFinalSummaryToSheets() {
+      const payload = {
+        type: "final_summary",
+        studentName: appState.name,
+        studentClass: appState.studentClass,
+        totalPassed: appState.results.length,
+        predicate: "Ahli Fungsi Bertingkat",
+        allResults: appState.results
+      };
+
+      if (!navigator.onLine) {
+        queueOfflineSubmission(payload);
+        return;
+      }
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        flushOfflineQueue();
+      } catch (e) {
+        queueOfflineSubmission(payload);
+      }
+    }
+
+    function copySubmissionReport() {
+      let text = `*RAPOR PEMROGRAMAN FUNGSI BERTINGKAT - KELAS 8*\n`;
+      text += `Nama: ${appState.name}\n`;
+      text += `Kelas: ${appState.studentClass}\n`;
+      text += `Hasil: 5 / 5 Skenario Selesai (2, 3, & 4 Parameter)\n\n`;
+      text += `*Kode Solusi Fungsi Siswa:*\n\n`;
+
+      appState.results.forEach((r, idx) => {
+        text += `[Kasus ${idx + 1}: ${r.title}]\n${r.code}\nOutput: ${r.output}\n\n`;
+      });
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Laporan pseudocode skenario berhasil disalin ke clipboard! Siap dikirim ke WhatsApp guru.");
+      }).catch(() => {
+        alert("Gagal menyalin otomatis. Silakan salin manual.");
+      });
+    }
+
+    function startFreshAll() {
+      if (confirm("Apakah kamu yakin ingin mereset semua jawaban dan mengulang dari awal?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+
+      if (loadStateFromStorage() && appState.name && appState.studentClass) {
+        enterWorkspaceUI();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Pembelajaran Informatika - SMP</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Fredoka & Nunito -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #0d1117;
+      /* Background doodle matematika & komputasi */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='%2338bdf8' fill-opacity='0.10' font-family='monospace' font-weight='bold'%3E%3Ctext x='15' y='32' font-size='18'%3E%2B%3C/text%3E%3Ctext x='110' y='42' font-size='20'%3E-%3C/text%3E%3Ctext x='65' y='85' font-size='18'%3E*%3C/text%3E%3Ctext x='15' y='130' font-size='18'%3E/%3C/text%3E%3Ctext x='110' y='140' font-size='18'%3E%3D%3C/text%3E%3Ctext x='130' y='90' font-size='16'%3E(%20)%3C/text%3E%3Ccircle cx='85' cy='120' r='3'/%3E%3Ccircle cx='30' cy='75' r='2.5'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .font-bubbly { font-family: 'Fredoka', cursive; }
+    .font-code { font-family: 'Fira Code', monospace; }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col items-center justify-between p-4 sm:p-8">
+
+  <!-- Header Portal -->
+  <header class="w-full max-w-4xl text-center space-y-3 pt-4 sm:pt-8">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider shadow-sm">
+      <i data-lucide="sparkles" class="w-4 h-4"></i>
+      <span>Laboratorium Komputasi Interaktif</span>
+    </div>
+    <h1 class="font-bubbly font-bold text-3xl sm:text-5xl text-white tracking-wide leading-tight">
+      Pilih Misi Pembelajaranmu
+    </h1>
+    <p class="text-sm sm:text-base text-slate-400 max-w-xl mx-auto font-medium">
+      Selamat datang! Silakan pilih kartu modul di bawah sesuai dengan tingkatan kelas dan tugas yang diberikan gurumu.
+    </p>
+  </header>
+
+  <!-- Pilihan Modul Utama (Grid Kartu Kelas 7 & 8) -->
+  <main class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+
+    <!-- KARTU 1: KELAS 7 (BINARY SEARCH) -->
+    <div class="bg-slate-900/95 border-2 border-amber-500/30 rounded-3xl p-6 sm:p-7 shadow-xl shadow-black/50 flex flex-col justify-between hover:border-amber-400/80 transition-all duration-300 transform hover:-translate-y-1 group">
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bubbly font-bold">
+            Kelas 7 SMP
+          </span>
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex items-center justify-center font-bubbly text-2xl shadow-md rotate-[-3deg] group-hover:rotate-0 transition">
+            🐻
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-bubbly font-bold text-2xl text-white group-hover:text-amber-400 transition">
+            Petualangan Binary Search
+          </h2>
+          <p class="text-xs text-amber-300/80 font-bold mt-0.5">Tebak Angka Misterius (Logaritma Biner)</p>
+        </div>
+
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          Temukan angka rahasia dari rentang 1 s.d. 2000 menggunakan metode bagi-dua yang paling efisien. Uji ketajaman berpikir logismu dalam 7 level misi!
+        </p>
+
+        <!-- Poin Fitur -->
+        <div class="space-y-2 pt-1 font-semibold text-xs text-slate-400">
+          <div class="flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-400 shrink-0"></i>
+            <span>7 Level Bertingkat (Batas 100 s.d. 2000)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-400 shrink-0"></i>
+            <span>Kalkulator Cakar & Trik Pembagian Ganjil</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-400 shrink-0"></i>
+            <span>Pencatatan Otomatis ke Google Sheets</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 space-y-2">
+        <div id="status-g7" class="text-[11px] text-amber-400 font-mono hidden"></div>
+        <!-- Ganti 'binary_search.html' sesuai nama file Binary Search Anda -->
+        <a href="binary.html" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bubbly font-black py-3.5 px-5 rounded-2xl shadow-lg shadow-orange-500/20 transition flex items-center justify-center gap-2 text-base">
+          <span>Mulai Misi Kelas 7</span>
+          <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- KARTU 2: KELAS 8 (FUNGSI PSEUDOCODE) -->
+    <div class="bg-slate-900/95 border-2 border-cyan-500/30 rounded-3xl p-6 sm:p-7 shadow-xl shadow-black/50 flex flex-col justify-between hover:border-cyan-400/80 transition-all duration-300 transform hover:-translate-y-1 group">
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="px-3.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bubbly font-bold">
+            Kelas 8 SMP
+          </span>
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 text-slate-950 flex items-center justify-center font-code font-black text-xl shadow-md rotate-[-3deg] group-hover:rotate-0 transition">
+            f()
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-bubbly font-bold text-2xl text-white group-hover:text-cyan-400 transition">
+            Lab Fungsi Pseudocode
+          </h2>
+          <p class="text-xs text-cyan-300/80 font-bold mt-0.5">Pemrograman Modular Berbasis Skenario</p>
+        </div>
+
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          Ketik kode fungsimu sendiri dari awal untuk menyelesaikan skenario nyata sekolah. Latih logika komputasimu mulai dari 2, 3, hingga 4 parameter!
+        </p>
+
+        <!-- Poin Fitur -->
+        <div class="space-y-2 pt-1 font-semibold text-xs text-slate-400">
+          <div class="flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+            <span>5 Skenario Nyata (2, 3, & 4 Parameter)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+            <span>Live Terminal Evaluator & Dukungan 'x'</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+            <span>Auto-Save Offline & Sync Google Sheets</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 space-y-2">
+        <div id="status-g8" class="text-[11px] text-cyan-400 font-mono hidden"></div>
+        <!-- Ganti 'pseudocode_lab.html' sesuai nama file Pseudocode Anda -->
+        <a href="function.html" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bubbly font-black py-3.5 px-5 rounded-2xl shadow-lg shadow-cyan-500/20 transition flex items-center justify-center gap-2 text-base">
+          <span>Mulai Misi Kelas 8</span>
+          <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer Portal -->
+  <footer class="w-full max-w-4xl text-center py-4 border-t border-slate-800 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+    <div>
+      SMP Pembelajaran Informatika • Kelas VII & VIII
+    </div>
+    <div class="flex items-center gap-1.5 text-slate-400 font-medium">
+      <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+      <span>Penyimpanan Aman Browser & Server Google Sheets</span>
+    </div>
+  </footer>
+
+  <script>
+    // Deteksi Progres Sebelumnya dari LocalStorage
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+
+      // Cek progres Kelas 7
+      const g7Data = localStorage.getItem("binary_search_kelas7_progress");
+      if (g7Data) {
+        try {
+          const parsed = JSON.parse(g7Data);
+          if (parsed.studentName) {
+            const badge7 = document.getElementById("status-g7");
+            badge7.innerText = `Lanjut: ${parsed.studentName} (Level ${parsed.currentLevelIndex + 1}/7)`;
+            badge7.classList.remove("hidden");
+          }
+        } catch (e) {}
+      }
+
+      // Cek progres Kelas 8
+      const g8Data = localStorage.getItem("lab_pseudocode_adaptive_drafts");
+      if (g8Data) {
+        try {
+          const parsed = JSON.parse(g8Data);
+          if (parsed.name) {
+            const badge8 = document.getElementById("status-g8");
+            badge8.innerText = `Lanjut: ${parsed.name} (Kasus ${parsed.currentMissionIdx + 1}/5)`;
+            badge8.classList.remove("hidden");
+          }
+        } catch (e) {}
+      }
+    });
+  </script>
+</body>
+</html>

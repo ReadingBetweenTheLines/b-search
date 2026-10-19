@@ -41,9 +41,15 @@
         <p class="text-xs sm:text-sm text-slate-400 font-semibold">Informatika Kelas 7 • Ayo Berburu Angka Misterius!</p>
       </div>
     </div>
-    <div id="student-tag" class="hidden text-xs bg-amber-500/10 border border-amber-500/40 text-amber-300 font-bold px-4 py-2 rounded-2xl flex items-center gap-2">
-      <i data-lucide="user" class="w-4 h-4 text-amber-400"></i>
-      <span id="student-tag-text">Siswa</span>
+    <div class="flex items-center gap-2">
+      <div id="save-tag" class="hidden text-[11px] bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 font-bold px-3 py-1.5 rounded-2xl flex items-center gap-1.5">
+        <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <span>Tersimpan di Browser</span>
+      </div>
+      <div id="student-tag" class="hidden text-xs bg-amber-500/10 border border-amber-500/40 text-amber-300 font-bold px-4 py-2 rounded-2xl flex items-center gap-2">
+        <i data-lucide="user" class="w-4 h-4 text-amber-400"></i>
+        <span id="student-tag-text">Siswa</span>
+      </div>
     </div>
   </header>
 
@@ -311,6 +317,11 @@
       <div class="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-center text-xs font-bold text-emerald-300">
         ✓ Seluruh progres level dan rekap nilai sudah tersimpan di Google Sheet Guru.
       </div>
+
+      <button onclick="startFreshAll()" class="w-full bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-bold py-2.5 px-4 rounded-2xl border border-slate-800 transition text-xs flex items-center justify-center gap-2">
+        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+        <span>Mulai Ulang dari Awal (Reset Data Browser)</span>
+      </button>
     </div>
 
   </main>
@@ -320,6 +331,7 @@
     // ENDPOINT WEB APP GOOGLE APPS SCRIPT
     // ====================================================
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXcrsPnrFGyhyjoMgaWqP4dZiK7O9V6TdzruluSK-US9tQptxW5YrPupL_ycNikWyB/exec";
+    const STORAGE_KEY = "binary_search_kelas7_progress";
 
     // Konfigurasi 7 Level Bertingkat
     const LEVELS_CONFIG = [
@@ -332,7 +344,7 @@
       { level: 7, maxNumber: 2000, idealSteps: 11 }
     ];
 
-    const gameState = {
+    let gameState = {
       studentName: "",
       studentClass: "",
       currentLevelIndex: 0,
@@ -346,8 +358,66 @@
       finalScore: 0,
       predicate: "",
       totalUserSteps: 0,
-      totalIdealSteps: 0
+      totalIdealSteps: 0,
+      isCompleted: false
     };
+
+    // ====================================================
+    // LOGIKA AUTO-SAVE & OFFLINE QUEUE
+    // ====================================================
+
+    function saveStateToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+      } catch (e) {
+        console.error("Gagal simpan gameState ke localStorage:", e);
+      }
+    }
+
+    function loadStateFromStorage() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return false;
+      try {
+        const parsed = JSON.parse(saved);
+        gameState = Object.assign(gameState, parsed);
+        return true;
+      } catch (e) {
+        console.error("Gagal parse gameState dari localStorage:", e);
+        return false;
+      }
+    }
+
+    function queueOfflineSubmission(payload) {
+      let queue = JSON.parse(localStorage.getItem("offline_sheet_queue") || "[]");
+      queue.push(payload);
+      localStorage.setItem("offline_sheet_queue", JSON.stringify(queue));
+    }
+
+    async function flushOfflineQueue() {
+      let queue = JSON.parse(localStorage.getItem("offline_sheet_queue") || "[]");
+      if (queue.length === 0) return;
+
+      let remaining = [];
+      for (let payload of queue) {
+        try {
+          await fetch(SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+        } catch (e) {
+          remaining.push(payload);
+        }
+      }
+      localStorage.setItem("offline_sheet_queue", JSON.stringify(remaining));
+    }
+
+    window.addEventListener("online", flushOfflineQueue);
+
+    // ====================================================
+    // REGISTRASI & WORKSPACE START
+    // ====================================================
 
     function handleStartGame(e) {
       e.preventDefault();
@@ -358,15 +428,23 @@
 
       gameState.studentName = name;
       gameState.studentClass = sClass;
+      saveStateToStorage();
 
-      document.getElementById("student-tag-text").innerText = `${name} (${sClass})`;
+      enterGameUI();
+      setupLevel(0);
+    }
+
+    function enterGameUI() {
+      document.getElementById("student-tag-text").innerText = `${gameState.studentName} (${gameState.studentClass})`;
       document.getElementById("student-tag").classList.remove("hidden");
+      document.getElementById("save-tag").classList.remove("hidden");
 
       document.getElementById("screen-register").classList.add("hidden");
       document.getElementById("screen-game").classList.remove("hidden");
 
       renderLevelProgressBars();
-      setupLevel(0);
+      renderCalculatorLogs();
+      flushOfflineQueue();
       lucide.createIcons();
     }
 
@@ -381,18 +459,23 @@
       });
     }
 
-    function setupLevel(levelIdx) {
+    function setupLevel(levelIdx, isRestoring = false) {
       gameState.currentLevelIndex = levelIdx;
       const config = LEVELS_CONFIG[levelIdx];
       
-      gameState.low = 1;
-      gameState.high = config.maxNumber;
-      gameState.userStepsThisLevel = 0;
-      gameState.currentLevelGuesses = [];
-      gameState.targetNumber = Math.floor(Math.random() * config.maxNumber) + 1;
+      if (!isRestoring) {
+        gameState.low = 1;
+        gameState.high = config.maxNumber;
+        gameState.userStepsThisLevel = 0;
+        gameState.currentLevelGuesses = [];
+        gameState.targetNumber = Math.floor(Math.random() * config.maxNumber) + 1;
+      }
+
+      saveStateToStorage();
 
       LEVELS_CONFIG.forEach((_, idx) => {
         const bar = document.getElementById(`prog-bar-${idx}`);
+        if (!bar) return;
         if (idx < levelIdx) {
           bar.className = "h-3 rounded-full bg-emerald-500";
         } else if (idx === levelIdx) {
@@ -405,7 +488,7 @@
       document.getElementById("level-indicator-badge").innerText = `Level ${levelIdx + 1} / 7`;
       document.getElementById("current-level-title").innerText = `Level ${levelIdx + 1} dari 7`;
       document.getElementById("current-range-headline").innerText = `Cari Angka: 1 s.d. ${config.maxNumber}`;
-      document.getElementById("current-step-counter").innerText = "0";
+      document.getElementById("current-step-counter").innerText = gameState.userStepsThisLevel;
       document.getElementById("ideal-step-helper").innerText = `(Maks Ideal: ${config.idealSteps} langkah)`;
       
       updateRangeBadges();
@@ -495,6 +578,8 @@
         });
       }
 
+      saveStateToStorage();
+
       banner.className = bannerClasses;
       banner.innerHTML = hintText;
       updateRangeBadges();
@@ -522,7 +607,7 @@
     }
 
     // ====================================================
-    // SELESAIKAN LEVEL & KIRIM OTOMATIS KE GOOGLE SHEETS
+    // SELESAIKAN LEVEL & SYNC
     // ====================================================
 
     function finishCurrentLevel() {
@@ -543,6 +628,8 @@
         idealSteps: ideal,
         score: score
       });
+
+      saveStateToStorage();
 
       document.getElementById("guess-input-box").classList.add("hidden");
       const nextBox = document.getElementById("next-level-box");
@@ -577,6 +664,15 @@
         calculatorUsageCount: gameState.calculatorLogs.filter(l => l.level === level).length
       };
 
+      if (!navigator.onLine) {
+        queueOfflineSubmission(payload);
+        if (statusIndicator) {
+          statusIndicator.className = "text-xs text-amber-400 font-bold flex items-center justify-center gap-1.5";
+          statusIndicator.innerHTML = `<span>Progres tersimpan di browser (Offline).</span>`;
+        }
+        return;
+      }
+
       try {
         await fetch(SCRIPT_URL, {
           method: "POST",
@@ -589,8 +685,10 @@
           statusIndicator.className = "text-xs text-emerald-400 font-bold flex items-center justify-center gap-1.5";
           statusIndicator.innerHTML = `<span>✓ Data Level ${level} tersimpan ke Google Sheets Guru!</span>`;
         }
+        flushOfflineQueue();
       } catch (err) {
         console.error("Gagal simpan progres level:", err);
+        queueOfflineSubmission(payload);
         if (statusIndicator) {
           statusIndicator.className = "text-xs text-amber-400 font-bold flex items-center justify-center gap-1.5";
           statusIndicator.innerHTML = `<span>Progres tetap tercatat di sistem browser.</span>`;
@@ -602,6 +700,8 @@
       if (gameState.currentLevelIndex + 1 < LEVELS_CONFIG.length) {
         setupLevel(gameState.currentLevelIndex + 1);
       } else {
+        gameState.isCompleted = true;
+        saveStateToStorage();
         showFinalReport();
       }
     }
@@ -624,7 +724,7 @@
         totalIdeal += l.idealSteps;
       });
 
-      const avgScore = Math.round(totalScore / LEVELS_CONFIG.length);
+      const avgScore = LEVELS_CONFIG.length > 0 ? Math.round(totalScore / LEVELS_CONFIG.length) : 0;
       gameState.finalScore = avgScore;
       gameState.totalUserSteps = totalActual;
       gameState.totalIdealSteps = totalIdeal;
@@ -634,6 +734,7 @@
       else if (avgScore >= 75) predicate = "Detektif Hebat & Terampil";
       else if (avgScore >= 60) predicate = "Cukup Terampil";
       gameState.predicate = predicate;
+      saveStateToStorage();
 
       document.getElementById("report-name").innerText = gameState.studentName;
       document.getElementById("report-class").innerText = gameState.studentClass;
@@ -669,6 +770,11 @@
         totalCalcLogs: gameState.calculatorLogs.length
       };
 
+      if (!navigator.onLine) {
+        queueOfflineSubmission(payload);
+        return;
+      }
+
       try {
         await fetch(SCRIPT_URL, {
           method: "POST",
@@ -676,8 +782,10 @@
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify(payload)
         });
+        flushOfflineQueue();
       } catch (e) {
         console.error("Gagal kirim rekap akhir:", e);
+        queueOfflineSubmission(payload);
       }
     }
 
@@ -701,6 +809,13 @@
       }).catch(() => {
         alert("Gagal menyalin otomatis.");
       });
+    }
+
+    function startFreshAll() {
+      if (confirm("Apakah kamu yakin ingin mereset seluruh progres tebakan dan mengulang dari Level 1?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      }
     }
 
     // ====================================================
@@ -764,24 +879,47 @@
         res: res
       });
 
-      const container = document.getElementById("calc-log-container");
-      document.getElementById("calc-log-counter").innerText = `${gameState.calculatorLogs.length} Operasi`;
-
-      const logItem = document.createElement("div");
-      logItem.className = "flex items-center justify-between bg-slate-800/80 p-2 rounded-xl border border-slate-700/60 text-[11px]";
-      logItem.innerHTML = `
-        <span class="text-slate-400 font-sans text-[10px] font-bold">[${timeStr}] L${lvl}</span>
-        <span class="font-bold text-white">${expr} = <span class="text-amber-400 font-black">${res}</span></span>
-      `;
-
-      if (gameState.calculatorLogs.length === 1) {
-        container.innerHTML = "";
-      }
-      container.prepend(logItem);
+      saveStateToStorage();
+      renderCalculatorLogs();
     }
+
+    function renderCalculatorLogs() {
+      const container = document.getElementById("calc-log-container");
+      const counter = document.getElementById("calc-log-counter");
+      if (!container || !counter) return;
+
+      counter.innerText = `${gameState.calculatorLogs.length} Operasi`;
+
+      if (gameState.calculatorLogs.length === 0) {
+        container.innerHTML = `<div class="text-slate-500 text-center py-4 italic font-sans text-xs">Belum ada perhitungan dicatat.</div>`;
+        return;
+      }
+
+      container.innerHTML = gameState.calculatorLogs.slice().reverse().map(l => `
+        <div class="flex items-center justify-between bg-slate-800/80 p-2 rounded-xl border border-slate-700/60 text-[11px]">
+          <span class="text-slate-400 font-sans text-[10px] font-bold">[${l.time}] L${l.level}</span>
+          <span class="font-bold text-white">${l.expr} = <span class="text-amber-400 font-black">${l.res}</span></span>
+        </div>
+      `).join("");
+    }
+
+    // ====================================================
+    // PEMULIHAN SESI OTOMATIS SAAT HALAMAN DIBUKA
+    // ====================================================
 
     document.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
+
+      if (loadStateFromStorage() && gameState.studentName && gameState.studentClass) {
+        enterGameUI();
+
+        if (gameState.isCompleted) {
+          showFinalReport();
+        } else {
+          // Pulihkan level yang sedang aktif
+          setupLevel(gameState.currentLevelIndex, true);
+        }
+      }
     });
   </script>
 </body>
