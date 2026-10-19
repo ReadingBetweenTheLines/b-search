@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tantangan Binary Search - Petualangan Angka Misterius</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts: Fredoka & Nunito -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #0d1117;
+      /* Background hitam dengan pola doodle angka & matematika putih transparan */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='%23ffffff' fill-opacity='0.12' font-family='Arial, sans-serif' font-weight='bold'%3E%3Ctext x='18' y='32' font-size='20'%3E%2B%3C/text%3E%3Ctext x='112' y='42' font-size='18'%3E7%3C/text%3E%3Ctext x='62' y='82' font-size='18'%3E%C3%B7%3C/text%3E%3Ctext x='16' y='126' font-size='20'%3E42%3C/text%3E%3Ctext x='118' y='136' font-size='18'%3E%3D%3C/text%3E%3Ctext x='134' y='92' font-size='16'%3E-%3C/text%3E%3Ctext x='54' y='32' font-size='15'%3E?%3C/text%3E%3Ccircle cx='86' cy='122' r='3.5'/%3E%3Ccircle cx='28' cy='72' r='2.5'/%3E%3Cpath d='M96,22 L101,31 L91,31 Z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .font-bubbly {
+      font-family: 'Fredoka', cursive;
+    }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col items-center p-3 sm:p-6">
+
+  <!-- Header Global -->
+  <header class="w-full max-w-4xl bg-slate-900/90 backdrop-blur-md border-2 border-amber-500/30 rounded-3xl p-4 sm:p-5 shadow-xl shadow-black/40 mb-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <div class="flex items-center gap-3.5">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center font-bubbly font-black text-2xl shadow-md rotate-[-3deg]">
+        🐻
+      </div>
+      <div>
+        <h1 class="font-bubbly font-bold text-amber-400 text-xl sm:text-2xl leading-tight">
+          Petualangan Binary Search
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-400 font-semibold">Informatika Kelas 7 • Ayo Berburu Angka Misterius!</p>
+      </div>
+    </div>
+    <div id="student-tag" class="hidden text-xs bg-amber-500/10 border border-amber-500/40 text-amber-300 font-bold px-4 py-2 rounded-2xl flex items-center gap-2">
+      <i data-lucide="user" class="w-4 h-4 text-amber-400"></i>
+      <span id="student-tag-text">Siswa</span>
+    </div>
+  </header>
+
+  <!-- SCREEN 1: Formulir Masuk -->
+  <main id="screen-register" class="w-full max-w-md bg-slate-900/95 border-2 border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/60">
+    <div class="text-center mb-6">
+      <div class="w-16 h-16 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-3xl flex items-center justify-center mx-auto mb-3 shadow-inner text-3xl">
+        🎯
+      </div>
+      <h2 class="font-bubbly text-2xl font-bold text-white">Siap Jadi Detektif Angka?</h2>
+      <p class="text-xs sm:text-sm text-slate-400 mt-1 font-medium">Tuliskan nama lengkap dan kelasmu untuk memulai 7 level misi!</p>
+    </div>
+
+    <form id="form-register" onsubmit="handleStartGame(event)" class="space-y-4">
+      <div>
+        <label for="input-name" class="block text-xs font-black uppercase tracking-wider text-amber-400 mb-1.5">Nama Lengkap Siswa</label>
+        <input type="text" id="input-name" required placeholder="Contoh: Budi Santoso" class="w-full px-4 py-3 rounded-2xl bg-slate-800/80 border-2 border-slate-700 focus:border-amber-400 focus:ring-4 focus:ring-amber-500/20 text-sm font-bold text-white placeholder-slate-500 outline-none transition">
+      </div>
+
+      <div>
+        <label for="select-class" class="block text-xs font-black uppercase tracking-wider text-amber-400 mb-1.5">Kelas</label>
+        <select id="select-class" required class="w-full px-4 py-3 rounded-2xl bg-slate-800 border-2 border-slate-700 focus:border-amber-400 focus:ring-4 focus:ring-amber-500/20 text-sm font-bold text-white outline-none transition">
+          <option value="" disabled selected class="text-slate-400">Pilih kelasmu...</option>
+          <option value="VII-1" class="bg-slate-800 text-white">Kelas VII-1</option>
+          <option value="VII-2" class="bg-slate-800 text-white">Kelas VII-2</option>
+          <option value="VII-3" class="bg-slate-800 text-white">Kelas VII-3</option>
+          <option value="VII-4" class="bg-slate-800 text-white">Kelas VII-4</option>
+        </select>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-bubbly font-black py-3.5 px-4 rounded-2xl shadow-lg shadow-orange-500/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 text-base">
+          <span>Mulai Misi Level 1</span>
+          <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <!-- SCREEN 2: Arena Pengerjaan Soal (7 Level) -->
+  <main id="screen-game" class="hidden w-full max-w-4xl space-y-5">
+    
+    <!-- Indikator 7 Level -->
+    <div class="bg-slate-900/90 border-2 border-slate-800 rounded-3xl p-4 sm:p-5 shadow-lg">
+      <div class="flex items-center justify-between mb-2">
+        <span class="font-bubbly font-bold text-sm text-slate-300">Peta Petualangan:</span>
+        <span id="level-indicator-badge" class="font-bubbly font-bold text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full border border-amber-500/30">Level 1 / 7</span>
+      </div>
+      <div class="grid grid-cols-7 gap-2" id="level-progress-bars"></div>
+    </div>
+
+    <!-- Kotak Trik Cepat Pembagian Ganjil -->
+    <div class="bg-gradient-to-r from-amber-950/40 to-orange-950/40 border-2 border-amber-500/30 rounded-3xl p-4 text-xs sm:text-sm text-amber-200 space-y-2 shadow-sm">
+      <div class="flex items-center gap-2 font-bubbly font-bold text-amber-400 text-sm">
+        <span class="text-lg">💡</span>
+        <span>Tips Pembagian & Trik Bilangan Ganjil:</span>
+      </div>
+      <ul class="list-disc pl-5 space-y-1 text-xs text-amber-100/90 leading-relaxed font-semibold">
+        <li><strong>Tebakan Pertama:</strong> Selalu bagi batas angka maksimal dengan 2.</li>
+        <li><strong>Langkah Berikutnya:</strong> Jumlahkan 2 batas terdekat lalu bagi 2.</li>
+        <li><strong>Trik jika hasil jumlahnya ganjil (misal 71 + 54 = 125):</strong> Pecah menjadi genap terdekat yaitu <strong>120 &divide; 2 = 60</strong>, sisanya <strong>5 &divide; 2 = 3</strong> (dibulatkan). Nilai tengahnya = <strong>60 + 3 = 63</strong>.</li>
+      </ul>
+    </div>
+
+    <!-- Workspace Utama -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      
+      <!-- Kolom Kiri: Penebak Angka & Riwayat -->
+      <section class="lg:col-span-7 space-y-4">
+        
+        <div class="bg-slate-900/90 border-2 border-slate-800 rounded-3xl p-5 shadow-lg">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+            <div>
+              <span id="current-level-title" class="font-bubbly font-bold text-xs text-orange-400 tracking-wider">Level 1</span>
+              <h2 id="current-range-headline" class="font-bubbly font-bold text-xl text-white">Cari Angka: 1 s.d. 100</h2>
+            </div>
+            <div class="text-right">
+              <span class="text-[11px] text-slate-500 font-bold block uppercase">Langkahmu</span>
+              <span id="current-step-counter" class="font-bubbly font-bold text-3xl text-amber-400">0</span>
+              <span id="ideal-step-helper" class="text-[11px] text-slate-500 block font-semibold">(Maks Ideal: 7)</span>
+            </div>
+          </div>
+
+          <!-- Batas Rentang Aktif -->
+          <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-3 mb-4 flex items-center justify-between text-xs">
+            <span class="text-slate-300 font-bold">Batas Aktif Saat Ini:</span>
+            <div class="font-bubbly font-bold text-white space-x-2 text-sm">
+              <span class="bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl text-amber-400" id="badge-low">1</span>
+              <span class="text-slate-500">s.d.</span>
+              <span class="bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl text-amber-400" id="badge-high">100</span>
+            </div>
+          </div>
+
+          <!-- Banner Petunjuk Hasil Tebakan -->
+          <div id="hint-banner" class="hidden p-3.5 rounded-2xl border-2 text-center font-bold text-sm mb-4"></div>
+
+          <!-- Input Angka Tebakan -->
+          <div id="guess-input-box" class="space-y-3">
+            <label for="input-guess" class="block text-xs font-black uppercase tracking-wider text-slate-400">
+              Masukkan Angka Hasil Hitunganmu:
+            </label>
+            <div class="flex gap-2">
+              <input type="number" id="input-guess" placeholder="Ketik angka..." class="flex-1 px-4 py-3 rounded-2xl bg-slate-800/90 border-2 border-slate-700 focus:border-amber-400 focus:ring-4 focus:ring-amber-500/20 text-lg font-bubbly font-bold text-white placeholder-slate-500 outline-none">
+              <button onclick="handleGuessSubmit()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bubbly font-black px-6 py-3 rounded-2xl shadow-md transition flex items-center gap-1.5 text-base">
+                <span>Tebak</span>
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tombol Lanjut Level -->
+          <div id="next-level-box" class="hidden text-center pt-2 space-y-2">
+            <div id="level-save-indicator" class="text-xs text-amber-300 font-bold flex items-center justify-center gap-1.5">
+              <i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i>
+              <span>Menyimpan nilai level ini ke Google Sheets...</span>
+            </div>
+            <button onclick="handleNextLevel()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-slate-950 font-bubbly font-black py-3.5 px-4 rounded-2xl shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2 text-base">
+              <span id="next-level-btn-text">Lanjut ke Level Berikutnya</span>
+              <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabel Riwayat Tebakan Level Ini -->
+        <div class="bg-slate-900/90 border-2 border-slate-800 rounded-3xl p-4 shadow-lg">
+          <h3 class="font-bubbly font-bold text-xs uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
+            <i data-lucide="list-ordered" class="w-4 h-4 text-amber-400"></i>
+            <span>Jejak Langkah Level Ini</span>
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse font-semibold">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-500">
+                  <th class="py-2 px-2">Ke</th>
+                  <th class="py-2 px-2">Tebakan</th>
+                  <th class="py-2 px-2">Hasil Petunjuk</th>
+                  <th class="py-2 px-2">Batas Baru</th>
+                </tr>
+              </thead>
+              <tbody id="history-table-body" class="divide-y divide-slate-800 text-slate-300">
+                <tr>
+                  <td colspan="4" class="py-4 text-center text-slate-500 italic font-normal">Belum ada tebakan dikirim.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Kolom Kanan: Kalkulator Cakar & Audit Log -->
+      <section class="lg:col-span-5 space-y-4">
+        
+        <div class="bg-slate-900/90 border-2 border-slate-800 rounded-3xl p-4 shadow-lg">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bubbly font-bold text-xs uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
+              <span>🧮 Kalkulator Cakar</span>
+            </h3>
+            <span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">Otomatis Dicatat</span>
+          </div>
+
+          <!-- Layar Kalkulator -->
+          <div class="bg-black/80 rounded-2xl p-3 text-right text-white font-mono mb-3 border border-slate-800">
+            <div id="calc-expression" class="text-xs text-amber-400 h-4 overflow-hidden"></div>
+            <div id="calc-display" class="font-bubbly text-2xl font-bold truncate tracking-wide text-white">0</div>
+          </div>
+
+          <!-- Keypad Kalkulator -->
+          <div class="grid grid-cols-4 gap-2 text-sm font-bold">
+            <button onclick="calcClear()" class="bg-rose-950/50 hover:bg-rose-900/60 border border-rose-800 text-rose-300 p-2.5 rounded-xl transition">C</button>
+            <button onclick="calcInput('(')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 p-2.5 rounded-xl transition border border-slate-700">(</button>
+            <button onclick="calcInput(')')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 p-2.5 rounded-xl transition border border-slate-700">)</button>
+            <button onclick="calcInput('/')" class="bg-orange-500 hover:bg-orange-600 text-slate-950 p-2.5 rounded-xl transition font-black">&divide;</button>
+
+            <button onclick="calcInput('7')" class="bg-slate-800/80 hover:bg-slate-700 text-white p-2.5 rounded-xl transition border border-slate-700/60">7</button>
+            <button onclick="calcInput('8')" class="bg-slate-800/80 hover:bg-slate-700 text-white p-2.5 rounded-xl transition border border-slate-700/60">8</button>
+            <button onclick="calcInput('9')" class="bg-slate-800/80 hover:bg-slate-700 text-white p-2.5 rounded-xl transition border border-slate-700/60">9</button>
+            <button onclick="calcInput('*')" class="bg-orange-500 hover:bg-orange-600 text-slate-950 p-2.5 rounded-xl transition font-black">&times;</button>
+
+            <button onclick="calcInput('4')" class="bg-slate-800/80 hover:bg-slate-700 text-white p-2.5 rounded-xl transition border border-slate-700/60">4</button>
+            <button onclick="calcInput('5')" class="bg-slate-800/80 hover:bg-slate-700 text-white p-2.5 rounded-xl transition border border-slate-700/60">5</button>
+            <button onclick="calcInput('6')" class="bg-slate-800/80 hover:bg-slate-700 text-white p-2.5 rounded-xl transition border border-slate-700/60">6</button>
+            <button onclick="calcInput('-')" class="bg-orange-500 hover:bg-orange-600 text-slate-950 p-2.5 rounded-xl transition font-black">&minus;</button>
+
+            <button onclick="calcInput('1')" class="bg-slate-800/80 hover:bg-slate-700 text-white p-2.5 rounded-xl transition border border-slate-700/60">1</button>
+            <button onclick="calcInput('2')" class="bg-slate-800/80 hover:bg-slate-700 text-white p-2.5 rounded-xl transition border border-slate-700/60">2</button>
+            <button onclick="calcInput('3')" class="bg-slate-800/80 hover:bg-slate-700 text-white p-2.5 rounded-xl transition border border-slate-700/60">3</button>
+            <button onclick="calcInput('+')" class="bg-orange-500 hover:bg-orange-600 text-slate-950 p-2.5 rounded-xl transition font-black">+</button>
+
+            <button onclick="calcInput('0')" class="col-span-2 bg-slate-800/80 hover:bg-slate-700 text-white p-2.5 rounded-xl transition border border-slate-700/60">0</button>
+            <button onclick="calcInput('.')" class="bg-slate-800/80 hover:bg-slate-700 text-white p-2.5 rounded-xl transition border border-slate-700/60">.</button>
+            <button onclick="calcCalculate()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 p-2.5 rounded-xl transition font-black text-base">=</button>
+          </div>
+        </div>
+
+        <!-- Log Audit Cakar -->
+        <div class="bg-slate-900/90 border-2 border-slate-800 rounded-3xl p-4 shadow-lg">
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="font-bubbly font-bold text-xs uppercase tracking-wider text-slate-400">Catatan Cakar Masuk</h4>
+            <span id="calc-log-counter" class="text-[11px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">0 Operasi</span>
+          </div>
+          <div id="calc-log-container" class="max-h-48 overflow-y-auto space-y-1.5 pr-1 text-xs font-mono">
+            <div class="text-slate-500 text-center py-4 italic font-sans text-xs">Belum ada perhitungan dicatat.</div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- SCREEN 3: Rapor Akhir -->
+  <main id="screen-report" class="hidden w-full max-w-2xl bg-slate-900/95 border-2 border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+    <div class="text-center mb-6">
+      <div class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-3xl flex items-center justify-center mx-auto mb-3 shadow-inner text-3xl">
+        🏆
+      </div>
+      <h2 class="font-bubbly text-2xl sm:text-3xl font-black text-white">Semua 7 Misi Selesai!</h2>
+      <p class="text-xs sm:text-sm text-slate-400 mt-1 font-semibold">Hebat! Setiap level sudah otomatis tersimpan ke Google Sheets gurumu.</p>
+    </div>
+
+    <!-- Ringkasan Nilai Siswa -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-800/80 border border-slate-700 rounded-2xl p-4 text-center mb-5">
+      <div>
+        <span class="text-[10px] text-slate-400 uppercase font-black block">Nama</span>
+        <span id="report-name" class="font-bold text-xs sm:text-sm text-white truncate block">-</span>
+      </div>
+      <div>
+        <span class="text-[10px] text-slate-400 uppercase font-black block">Kelas</span>
+        <span id="report-class" class="font-bold text-xs sm:text-sm text-white block">-</span>
+      </div>
+      <div>
+        <span class="text-[10px] text-slate-400 uppercase font-black block">Nilai Akhir</span>
+        <span id="report-score" class="font-bubbly text-2xl font-black text-amber-400 block">0</span>
+      </div>
+      <div>
+        <span class="text-[10px] text-slate-400 uppercase font-black block">Predikat</span>
+        <span id="report-predicate" class="text-xs font-bold text-emerald-400 block">Master Biner</span>
+      </div>
+    </div>
+
+    <!-- Tabel Rekap 7 Level -->
+    <div class="border border-slate-800 rounded-2xl overflow-hidden mb-5">
+      <table class="w-full text-xs text-left">
+        <thead class="bg-slate-800/90 border-b border-slate-700 text-slate-300 font-bold uppercase text-[10px]">
+          <tr>
+            <th class="py-2.5 px-3">Level</th>
+            <th class="py-2.5 px-3">Rentang Angka</th>
+            <th class="py-2.5 px-3">Langkahmu</th>
+            <th class="py-2.5 px-3">Maks Ideal</th>
+            <th class="py-2.5 px-3 text-right">Skor</th>
+          </tr>
+        </thead>
+        <tbody id="report-table-body" class="divide-y divide-slate-800 font-semibold text-slate-300"></tbody>
+      </table>
+    </div>
+
+    <div class="space-y-3">
+      <button onclick="copyFinalReport()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bubbly font-bold py-3 px-4 rounded-2xl border border-slate-700 transition flex items-center justify-center gap-2 text-sm">
+        <i data-lucide="copy" class="w-4 h-4"></i>
+        <span>Salin Ringkasan Rapor (WhatsApp / Catatan)</span>
+      </button>
+      
+      <div class="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-center text-xs font-bold text-emerald-300">
+        ✓ Seluruh progres level dan rekap nilai sudah tersimpan di Google Sheet Guru.
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // ====================================================
+    // ENDPOINT WEB APP GOOGLE APPS SCRIPT
+    // ====================================================
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXcrsPnrFGyhyjoMgaWqP4dZiK7O9V6TdzruluSK-US9tQptxW5YrPupL_ycNikWyB/exec";
+
+    // Konfigurasi 7 Level Bertingkat
+    const LEVELS_CONFIG = [
+      { level: 1, maxNumber: 100, idealSteps: 7 },
+      { level: 2, maxNumber: 150, idealSteps: 8 },
+      { level: 3, maxNumber: 250, idealSteps: 8 },
+      { level: 4, maxNumber: 500, idealSteps: 9 },
+      { level: 5, maxNumber: 750, idealSteps: 10 },
+      { level: 6, maxNumber: 1000, idealSteps: 10 },
+      { level: 7, maxNumber: 2000, idealSteps: 11 }
+    ];
+
+    const gameState = {
+      studentName: "",
+      studentClass: "",
+      currentLevelIndex: 0,
+      targetNumber: 0,
+      low: 1,
+      high: 100,
+      userStepsThisLevel: 0,
+      levelHistory: [],        // [{level, maxNumber, target, userSteps, idealSteps, score}]
+      currentLevelGuesses: [],   // [{step, guess, hint, range}]
+      calculatorLogs: [],      // [{time, level, expr, res}]
+      finalScore: 0,
+      predicate: "",
+      totalUserSteps: 0,
+      totalIdealSteps: 0
+    };
+
+    function handleStartGame(e) {
+      e.preventDefault();
+      const name = document.getElementById("input-name").value.trim();
+      const sClass = document.getElementById("select-class").value;
+
+      if (!name || !sClass) return;
+
+      gameState.studentName = name;
+      gameState.studentClass = sClass;
+
+      document.getElementById("student-tag-text").innerText = `${name} (${sClass})`;
+      document.getElementById("student-tag").classList.remove("hidden");
+
+      document.getElementById("screen-register").classList.add("hidden");
+      document.getElementById("screen-game").classList.remove("hidden");
+
+      renderLevelProgressBars();
+      setupLevel(0);
+      lucide.createIcons();
+    }
+
+    function renderLevelProgressBars() {
+      const container = document.getElementById("level-progress-bars");
+      container.innerHTML = "";
+      LEVELS_CONFIG.forEach((lvl, idx) => {
+        const bar = document.createElement("div");
+        bar.id = `prog-bar-${idx}`;
+        bar.className = "h-3 rounded-full bg-slate-800 transition-all duration-300";
+        container.appendChild(bar);
+      });
+    }
+
+    function setupLevel(levelIdx) {
+      gameState.currentLevelIndex = levelIdx;
+      const config = LEVELS_CONFIG[levelIdx];
+      
+      gameState.low = 1;
+      gameState.high = config.maxNumber;
+      gameState.userStepsThisLevel = 0;
+      gameState.currentLevelGuesses = [];
+      gameState.targetNumber = Math.floor(Math.random() * config.maxNumber) + 1;
+
+      LEVELS_CONFIG.forEach((_, idx) => {
+        const bar = document.getElementById(`prog-bar-${idx}`);
+        if (idx < levelIdx) {
+          bar.className = "h-3 rounded-full bg-emerald-500";
+        } else if (idx === levelIdx) {
+          bar.className = "h-3 rounded-full bg-amber-500 animate-pulse";
+        } else {
+          bar.className = "h-3 rounded-full bg-slate-800";
+        }
+      });
+
+      document.getElementById("level-indicator-badge").innerText = `Level ${levelIdx + 1} / 7`;
+      document.getElementById("current-level-title").innerText = `Level ${levelIdx + 1} dari 7`;
+      document.getElementById("current-range-headline").innerText = `Cari Angka: 1 s.d. ${config.maxNumber}`;
+      document.getElementById("current-step-counter").innerText = "0";
+      document.getElementById("ideal-step-helper").innerText = `(Maks Ideal: ${config.idealSteps} langkah)`;
+      
+      updateRangeBadges();
+
+      const banner = document.getElementById("hint-banner");
+      banner.className = "hidden p-3.5 rounded-2xl border-2 text-center font-bold text-sm mb-4";
+      banner.innerHTML = "";
+
+      document.getElementById("guess-input-box").classList.remove("hidden");
+      document.getElementById("next-level-box").classList.add("hidden");
+      document.getElementById("input-guess").value = "";
+      document.getElementById("input-guess").focus();
+
+      renderHistoryTable();
+    }
+
+    function updateRangeBadges() {
+      document.getElementById("badge-low").innerText = gameState.low;
+      document.getElementById("badge-high").innerText = gameState.high;
+    }
+
+    function handleGuessSubmit() {
+      const input = document.getElementById("input-guess");
+      const guess = parseInt(input.value, 10);
+      const config = LEVELS_CONFIG[gameState.currentLevelIndex];
+
+      if (isNaN(guess)) {
+        alert("Mohon masukkan angka tebakan!");
+        return;
+      }
+
+      if (guess < 1 || guess > config.maxNumber) {
+        alert(`Angka harus berada di antara 1 sampai ${config.maxNumber}!`);
+        return;
+      }
+
+      gameState.userStepsThisLevel++;
+      document.getElementById("current-step-counter").innerText = gameState.userStepsThisLevel;
+
+      const banner = document.getElementById("hint-banner");
+      let hintText = "";
+      let bannerClasses = "";
+      let remainingRangeText = "";
+
+      if (guess === gameState.targetNumber) {
+        hintText = `🎉 TEPAT SEKALI! Angka misteriusnya adalah ${guess}!`;
+        bannerClasses = "p-3.5 rounded-2xl border-2 border-emerald-500/50 bg-emerald-950/60 text-emerald-300 text-center font-bold text-sm mb-4 block";
+        remainingRangeText = `Selesai (${guess})`;
+
+        gameState.currentLevelGuesses.push({
+          step: gameState.userStepsThisLevel,
+          guess: guess,
+          hint: "TEPAT",
+          range: remainingRangeText
+        });
+
+        finishCurrentLevel();
+
+      } else if (guess < gameState.targetNumber) {
+        hintText = `Angka rahasia LEBIH BESAR ( > ) dari ${guess}`;
+        bannerClasses = "p-3.5 rounded-2xl border-2 border-sky-500/50 bg-sky-950/60 text-sky-300 text-center font-bold text-sm mb-4 block";
+        if (guess >= gameState.low) {
+          gameState.low = guess + 1;
+        }
+        remainingRangeText = `${gameState.low} s.d. ${gameState.high}`;
+
+        gameState.currentLevelGuesses.push({
+          step: gameState.userStepsThisLevel,
+          guess: guess,
+          hint: "Lebih Besar ( > )",
+          range: remainingRangeText
+        });
+
+      } else {
+        hintText = `Angka rahasia LEBIH KECIL ( < ) dari ${guess}`;
+        bannerClasses = "p-3.5 rounded-2xl border-2 border-amber-500/50 bg-amber-950/60 text-amber-300 text-center font-bold text-sm mb-4 block";
+        if (guess <= gameState.high) {
+          gameState.high = guess - 1;
+        }
+        remainingRangeText = `${gameState.low} s.d. ${gameState.high}`;
+
+        gameState.currentLevelGuesses.push({
+          step: gameState.userStepsThisLevel,
+          guess: guess,
+          hint: "Lebih Kecil ( < )",
+          range: remainingRangeText
+        });
+      }
+
+      banner.className = bannerClasses;
+      banner.innerHTML = hintText;
+      updateRangeBadges();
+      renderHistoryTable();
+
+      input.value = "";
+      input.focus();
+    }
+
+    function renderHistoryTable() {
+      const tbody = document.getElementById("history-table-body");
+      if (gameState.currentLevelGuesses.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-500 italic font-normal">Belum ada tebakan dikirim.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = gameState.currentLevelGuesses.map(g => `
+        <tr class="hover:bg-slate-800/50 transition">
+          <td class="py-2 px-2 font-bold text-slate-500">#${g.step}</td>
+          <td class="py-2 px-2 font-bubbly font-bold text-white text-sm">${g.guess}</td>
+          <td class="py-2 px-2 font-bold ${g.hint.includes('TEPAT') ? 'text-emerald-400' : (g.hint.includes('Besar') ? 'text-sky-400' : 'text-amber-400')}">${g.hint}</td>
+          <td class="py-2 px-2 text-slate-400 font-mono text-[11px]">${g.range}</td>
+        </tr>
+      `).join("");
+    }
+
+    // ====================================================
+    // SELESAIKAN LEVEL & KIRIM OTOMATIS KE GOOGLE SHEETS
+    // ====================================================
+
+    function finishCurrentLevel() {
+      const config = LEVELS_CONFIG[gameState.currentLevelIndex];
+      const actual = gameState.userStepsThisLevel;
+      const ideal = config.idealSteps;
+
+      let score = 100;
+      if (actual > ideal) {
+        score = Math.max(50, 100 - (actual - ideal) * 10);
+      }
+
+      gameState.levelHistory.push({
+        level: config.level,
+        maxNumber: config.maxNumber,
+        targetNumber: gameState.targetNumber,
+        userSteps: actual,
+        idealSteps: ideal,
+        score: score
+      });
+
+      document.getElementById("guess-input-box").classList.add("hidden");
+      const nextBox = document.getElementById("next-level-box");
+      nextBox.classList.remove("hidden");
+
+      if (gameState.currentLevelIndex + 1 < LEVELS_CONFIG.length) {
+        document.getElementById("next-level-btn-text").innerText = `Lanjut ke Level ${gameState.currentLevelIndex + 2}`;
+      } else {
+        document.getElementById("next-level-btn-text").innerText = `Lihat Rapor Akhir`;
+      }
+
+      confetti({ particleCount: 70, spread: 60, origin: { y: 0.7 } });
+
+      // Kirim data progres level ini ke Apps Script
+      sendLevelToSheets(config.level, config.maxNumber, gameState.targetNumber, actual, ideal, score);
+    }
+
+    async function sendLevelToSheets(level, maxNum, target, actual, ideal, score) {
+      const statusIndicator = document.getElementById("level-save-indicator");
+      
+      const payload = {
+        type: "level_complete",
+        studentName: gameState.studentName,
+        studentClass: gameState.studentClass,
+        level: level,
+        maxNumber: maxNum,
+        targetNumber: target,
+        userSteps: actual,
+        idealSteps: ideal,
+        score: score,
+        guesses: gameState.currentLevelGuesses,
+        calculatorUsageCount: gameState.calculatorLogs.filter(l => l.level === level).length
+      };
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        if (statusIndicator) {
+          statusIndicator.className = "text-xs text-emerald-400 font-bold flex items-center justify-center gap-1.5";
+          statusIndicator.innerHTML = `<span>✓ Data Level ${level} tersimpan ke Google Sheets Guru!</span>`;
+        }
+      } catch (err) {
+        console.error("Gagal simpan progres level:", err);
+        if (statusIndicator) {
+          statusIndicator.className = "text-xs text-amber-400 font-bold flex items-center justify-center gap-1.5";
+          statusIndicator.innerHTML = `<span>Progres tetap tercatat di sistem browser.</span>`;
+        }
+      }
+    }
+
+    function handleNextLevel() {
+      if (gameState.currentLevelIndex + 1 < LEVELS_CONFIG.length) {
+        setupLevel(gameState.currentLevelIndex + 1);
+      } else {
+        showFinalReport();
+      }
+    }
+
+    // ====================================================
+    // RAPOR AKHIR
+    // ====================================================
+
+    function showFinalReport() {
+      document.getElementById("screen-game").classList.add("hidden");
+      document.getElementById("screen-report").classList.remove("hidden");
+
+      let totalScore = 0;
+      let totalActual = 0;
+      let totalIdeal = 0;
+
+      gameState.levelHistory.forEach(l => {
+        totalScore += l.score;
+        totalActual += l.userSteps;
+        totalIdeal += l.idealSteps;
+      });
+
+      const avgScore = Math.round(totalScore / LEVELS_CONFIG.length);
+      gameState.finalScore = avgScore;
+      gameState.totalUserSteps = totalActual;
+      gameState.totalIdealSteps = totalIdeal;
+
+      let predicate = "Perlu Latihan";
+      if (avgScore >= 90) predicate = "Master Biner (Sangat Efisien)";
+      else if (avgScore >= 75) predicate = "Detektif Hebat & Terampil";
+      else if (avgScore >= 60) predicate = "Cukup Terampil";
+      gameState.predicate = predicate;
+
+      document.getElementById("report-name").innerText = gameState.studentName;
+      document.getElementById("report-class").innerText = gameState.studentClass;
+      document.getElementById("report-score").innerText = avgScore;
+      document.getElementById("report-predicate").innerText = predicate;
+
+      const tbody = document.getElementById("report-table-body");
+      tbody.innerHTML = gameState.levelHistory.map(l => `
+        <tr class="hover:bg-slate-800/50 transition">
+          <td class="py-2.5 px-3 font-bold text-white">Level ${l.level}</td>
+          <td class="py-2.5 px-3 text-slate-400 font-medium">1 s.d. ${l.maxNumber}</td>
+          <td class="py-2.5 px-3 font-extrabold text-amber-400">${l.userSteps} lkh</td>
+          <td class="py-2.5 px-3 text-slate-500 font-medium">${l.idealSteps} lkh</td>
+          <td class="py-2.5 px-3 text-right font-black ${l.score >= 80 ? 'text-emerald-400' : 'text-orange-400'}">${l.score}</td>
+        </tr>
+      `).join("");
+
+      sendFinalReportToSheets();
+
+      confetti({ particleCount: 130, spread: 80, origin: { y: 0.6 } });
+      lucide.createIcons();
+    }
+
+    async function sendFinalReportToSheets() {
+      const payload = {
+        type: "final_report",
+        studentName: gameState.studentName,
+        studentClass: gameState.studentClass,
+        finalScore: gameState.finalScore,
+        predicate: gameState.predicate,
+        totalUserSteps: gameState.totalUserSteps,
+        totalIdealSteps: gameState.totalIdealSteps,
+        totalCalcLogs: gameState.calculatorLogs.length
+      };
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        console.error("Gagal kirim rekap akhir:", e);
+      }
+    }
+
+    function copyFinalReport() {
+      let text = `*RAPOR PETUALANGAN BINARY SEARCH - KELAS 7*\n`;
+      text += `Nama: ${gameState.studentName}\n`;
+      text += `Kelas: ${gameState.studentClass}\n`;
+      text += `Nilai Akhir: ${gameState.finalScore} / 100\n`;
+      text += `Predikat: ${gameState.predicate}\n\n`;
+      text += `*Rincian Perolehan 7 Level:*\n`;
+      
+      gameState.levelHistory.forEach(l => {
+        text += `- Level ${l.level} (1-${l.maxNumber}): ${l.userSteps} langkah (Ideal: ${l.idealSteps}) [Skor: ${l.score}]\n`;
+      });
+
+      text += `\nTotal Langkah Siswa: ${gameState.totalUserSteps} (Ideal: ${gameState.totalIdealSteps})\n`;
+      text += `Total Hitungan Kalkulator: ${gameState.calculatorLogs.length} operasi.`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Laporan berhasil disalin ke clipboard! Siap ditempel ke WhatsApp / catatan.");
+      }).catch(() => {
+        alert("Gagal menyalin otomatis.");
+      });
+    }
+
+    // ====================================================
+    // KALKULATOR CAKAR & AUDIT LOG
+    // ====================================================
+
+    let calcCurrent = "";
+
+    function calcInput(val) {
+      if (calcCurrent === "0" && val !== ".") {
+        calcCurrent = val;
+      } else {
+        calcCurrent += val;
+      }
+      updateCalcDisplay();
+    }
+
+    function calcClear() {
+      calcCurrent = "";
+      document.getElementById("calc-expression").innerText = "";
+      document.getElementById("calc-display").innerText = "0";
+    }
+
+    function updateCalcDisplay() {
+      document.getElementById("calc-display").innerText = calcCurrent || "0";
+    }
+
+    function calcCalculate() {
+      if (!calcCurrent) return;
+
+      const expr = calcCurrent;
+      try {
+        if (!/^[0-9+\-*/().\s]+$/.test(expr)) {
+          throw new Error("Invalid format");
+        }
+
+        const res = Function(`"use strict"; return (${expr})`)();
+        const roundedRes = Math.round((res + Number.EPSILON) * 100) / 100;
+
+        document.getElementById("calc-expression").innerText = `${expr} =`;
+        document.getElementById("calc-display").innerText = roundedRes;
+        calcCurrent = String(roundedRes);
+
+        addCalcLog(expr, roundedRes);
+
+      } catch (e) {
+        document.getElementById("calc-display").innerText = "Error";
+        calcCurrent = "";
+      }
+    }
+
+    function addCalcLog(expr, res) {
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+      const lvl = gameState.currentLevelIndex + 1;
+
+      gameState.calculatorLogs.push({
+        time: timeStr,
+        level: lvl,
+        expr: expr,
+        res: res
+      });
+
+      const container = document.getElementById("calc-log-container");
+      document.getElementById("calc-log-counter").innerText = `${gameState.calculatorLogs.length} Operasi`;
+
+      const logItem = document.createElement("div");
+      logItem.className = "flex items-center justify-between bg-slate-800/80 p-2 rounded-xl border border-slate-700/60 text-[11px]";
+      logItem.innerHTML = `
+        <span class="text-slate-400 font-sans text-[10px] font-bold">[${timeStr}] L${lvl}</span>
+        <span class="font-bold text-white">${expr} = <span class="text-amber-400 font-black">${res}</span></span>
+      `;
+
+      if (gameState.calculatorLogs.length === 1) {
+        container.innerHTML = "";
+      }
+      container.prepend(logItem);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
